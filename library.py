@@ -1,16 +1,20 @@
 import mysql.connector as sql
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 
 class Library:
     def __init__(self):
         self.connection = sql.connect(
-            host='',
-            user='',
-            password='',
+            host=os.getenv("DB_HOST"),
+            user=os.getenv("DB_USER"),
+            password=os.getenv("DB_PASSWORD"),
         )
         self.cursor = self.connection.cursor()
         self.cursor.execute("CREATE DATABASE IF NOT EXISTS library")
-        self.cursor.execute("USE library")
+        self.cursor.execute(f'USE {os.getenv("DB_NAME")}')
         self.cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS books (
@@ -52,5 +56,3 @@ class Library:
         results = self.cursor.fetchall()
 
         return results
-
-    def search_book_by_id(self,book_id:)
