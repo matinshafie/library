@@ -45,6 +45,16 @@ class Library:
         self.cursor.execute("INSERT INTO authors (name) VALUES (%s)", (name,))
         self.connection.commit()
 
+    def remove_book(self, book_id: int):
+        query = "DELETE FROM books WHERE book_id=%s"
+        self.cursor.execute(query, (book_id,))
+        self.connection.commit()
+
+    def remove_author(self, author_id: int):
+        query = "DELETE FROM authors WHERE author_id=%s"
+        self.cursor.execute(query, (author_id,))
+        self.connection.commit()
+
     def get_books(self) -> list[tuple]:
         self.cursor.execute("SELECT * FROM books")
         results = self.cursor.fetchall()
