@@ -66,3 +66,13 @@ class Library:
         results = self.cursor.fetchall()
 
         return results
+
+    def book_existence(self, book_id: int) -> bool:
+        query = "SELECT 1 FROM books WHERE book_id=%s LIMIT 1"
+        self.cursor.execute(query, (book_id,))
+        return self.cursor.fetchone() is not None
+
+    def author_existence(self, author_id: int) -> bool:
+        query = "SELECT 1 FROM authors WHERE author_id=%s LIMIT 1"
+        self.cursor.execute(query, (author_id,))
+        return self.cursor.fetchone() is not None
