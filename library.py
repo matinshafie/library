@@ -87,13 +87,17 @@ class Library:
         self.cursor.execute(query, (author_id,))
         return self.cursor.fetchone()
 
-    def search_by_book_name(self, book_name: str) -> list[tuple]:
+    def search_by_book_title(self, book_name: str) -> list[tuple]:
+        if not book_name:
+            return []
         query = "SELECT * FROM books WHERE title REGEXP %s"
         self.cursor.execute(query, (book_name,))
         return self.cursor.fetchall()
 
     def search_by_author_name(self, author_name: str) -> list[tuple]:
         query = "SELECT * FROM authors WHERE name REGEXP %s"
+        if not author_name:
+            return []
         self.cursor.execute(query, (author_name,))
         return self.cursor.fetchall()
 
@@ -101,6 +105,8 @@ class Library:
         author_ids = tuple(
             map(lambda author: author[0], self.search_by_author_name(author_name))
         )
+        if not author_ids:
+            return []
         placeholders = ",".join(["%s"] * len(author_ids))
         query = f"SELECT * FROM books WHERE author_id IN ({placeholders})"
         self.cursor.execute(query, author_ids)

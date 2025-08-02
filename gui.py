@@ -11,7 +11,9 @@ def show_options():
     print("4.add author")
     print("5.remove book")
     print("6.remove author")
-    print("7.exit")
+    print("7.search book")
+    print("8.search author")
+    print("9.exit")
 
 
 def get_prompt(prompt: str) -> str:
@@ -58,41 +60,106 @@ def show_books():
         print(
             f"{num}.id:{book_id}-title:{title}-author:{author_id}-published:{published_year}"
         )
-    print()
 
 
 def show_authors():
-    for num, (author_id, name) in enumerate(lib.get_authors()):
+    for num, (author_id, name) in enumerate(lib.get_authors(), 1):
         print(f"{num}.id:{author_id}-name:{name}")
+
+
+def search_book():
+    print("1.search by id")
+    print("2.search by title")
+    print("3.search by author")
+    print("4.search by published year")
     print()
 
-
-while True:
-    show_options()
-    print()
-
-    number = get_number("enter number for operation: ")
-    print()
-
+    number = get_number("enter operation number: ")
     if number == 1:
-        show_books()
+        book_id = get_number("enter book id: ")
+        print(lib.search_book_by_id(book_id))
+        print()
     elif number == 2:
-        show_authors()
+        book_title = get_prompt("enter book title: ")
+        results = lib.search_by_book_title(book_title)
+        for num, (book_id, title, author_id, published_year) in enumerate(results, 1):
+            print(
+                f"{num}.id:{book_id}-title:{title}-author:{author_id}-published:{published_year}"
+            )
+        print()
     elif number == 3:
-        add_book()
+        author_name = get_prompt("enter author's name: ")
+        results = lib.search_book_by_author_name(author_name)
+        for num, (book_id, title, author_id, published_year) in enumerate(results, 1):
+            print(
+                f"{num}.id:{book_id}-title:{title}-author:{author_id}-published:{published_year}"
+            )
         print()
     elif number == 4:
-        lib.add_author(get_prompt("enter author's name: "))
+        published_year = get_prompt("enter published year: ")
+        results = lib.search_book_by_published_year(published_year)
+        for num, (book_id, title, author_id, published_year) in enumerate(results, 1):
+            print(
+                f"{num}.id:{book_id}-title:{title}-author:{author_id}-published:{published_year}"
+            )
         print()
-    elif number == 5:
-        show_books()
-        remove_book()
+
+
+def search_author():
+    print("1.search by id")
+    print("2.search by name")
+    print()
+
+    number = get_number("enter operation number: ")
+    if number == 1:
+        author_id = get_number("enter author id: ")
+        print(lib.search_author_by_id(author_id))
         print()
-    elif number == 6:
-        show_authors()
-        remove_author()
+    elif number == 2:
+        author_name = get_prompt("enter author name: ")
+        results = lib.search_by_author_name(author_name)
+        for num, (author_id, name) in enumerate(results, 1):
+            print(f"{num}.id:{author_id}-name:{name}")
         print()
-    elif number == 7:
-        break
-    else:
-        print("invalid operation")
+
+
+def run():
+    while True:
+        show_options()
+        print()
+
+        number = get_number("enter number for operation: ")
+        print()
+
+        if number == 1:
+            show_books()
+            print()
+        elif number == 2:
+            show_authors()
+            print()
+        elif number == 3:
+            add_book()
+            print()
+        elif number == 4:
+            lib.add_author(get_prompt("enter author's name: "))
+            print()
+        elif number == 5:
+            show_books()
+            remove_book()
+            print()
+        elif number == 6:
+            show_authors()
+            remove_author()
+            print()
+        elif number == 7:
+            search_book()
+        elif number == 8:
+            search_author()
+        elif number == 9:
+            break
+        else:
+            print("invalid operation")
+
+
+if __name__ == "__main__":
+    run()
