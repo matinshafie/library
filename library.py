@@ -96,3 +96,17 @@ class Library:
         query = "SELECT * FROM authors WHERE name REGEXP %s"
         self.cursor.execute(query, (author_name,))
         return self.cursor.fetchall()
+
+    def search_book_by_author_name(self, author_name: str) -> list[tuple]:
+        author_ids = tuple(
+            map(lambda author: author[0], self.search_by_author_name(author_name))
+        )
+        placeholders = ",".join(["%s"] * len(author_ids))
+        query = f"SELECT * FROM books WHERE author_id IN ({placeholders})"
+        self.cursor.execute(query, author_ids)
+        return self.cursor.fetchall()
+
+    def search_book_by_published_year(self, published_year: int) -> list[tuple]:
+        query = "SELECT * FROM books WHERE published_year=%s"
+        self.cursor.execute(query, (published_year,))
+        return self.cursor.fetchall()
