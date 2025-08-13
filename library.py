@@ -142,3 +142,8 @@ class UserOperations:
             )
         """
         )
+    
+    def add_user_type(self,user_type:str,limit_borrow_book:int):
+        query="INSERT INTO user_types (type,limit_borrow) VALUES (%s,%s)"
+        self.cursor.execute(query,(user_type,limit_borrow_book))
+        self.connection.commit()
