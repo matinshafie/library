@@ -126,3 +126,19 @@ class Library:
         query="INSERT INTO user_types (type,limit_borrow) VALUES (%s,%s)"
         self.cursor.execute(query,(user_type,limit))
         self.connection.commit()
+
+class UserOperations:
+    def __init__(self):
+        self.connection=get_connection()
+        self.cursor=self.connection.cursor()
+        self.cursor.execute(f'USE library')
+        
+        self.cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS user_types (
+                type_id INT PRIMARY KEY AUTO_INCREMENT,
+                type VARCHAR(50) NOT NULL,
+                limit_borrow INT NOT NULL
+            )
+        """
+        )
