@@ -147,3 +147,7 @@ class UserOperations:
         query="INSERT INTO user_types (type,limit_borrow) VALUES (%s,%s)"
         self.cursor.execute(query,(user_type,limit_borrow_book))
         self.connection.commit()
+
+    def remove_user_type(self,type_id:int):
+        query="DELETE FROM user_types WHERE type_id=%s"
+        self.cursor.execute(query,(type_id,))
