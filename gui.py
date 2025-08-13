@@ -54,11 +54,11 @@ def remove_author():
 
 
 def show_books():
-    for num, (book_id, title, author_id, published_year) in enumerate(
+    for num, (book_id, title, author_id, published_year,added_date) in enumerate(
         lib.get_books(), 1
     ):
         print(
-            f"{num}.id:{book_id}-title:{title}-author:{author_id}-published:{published_year}"
+            f"{num}.id:{book_id}-title:{title}-author:{author_id}-published:{published_year}-added_date:{added_date}"
         )
 
 
@@ -82,9 +82,9 @@ def search_book():
     elif number == 2:
         book_title = get_prompt("enter book title: ")
         results = lib.search_by_book_title(book_title)
-        for num, (book_id, title, author_id, published_year) in enumerate(results, 1):
+        for num, (book_id, title, author_id, published_year,added_date) in enumerate(results, 1):
             print(
-                f"{num}.id:{book_id}-title:{title}-author:{author_id}-published:{published_year}"
+                f"{num}.id:{book_id}-title:{title}-author:{author_id}-published:{published_year}-added_date:{added_date}"
             )
         print()
     elif number == 3:

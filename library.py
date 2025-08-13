@@ -25,7 +25,8 @@ class Library:
                 book_id INT PRIMARY KEY AUTO_INCREMENT,
                 title VARCHAR(50) NOT NULL,
                 author_id INT NOT NULL,
-                published_year INT NOT NULL
+                published_year INT NOT NULL,
+                added_date DATE NOT NULL
             )
         """
         )
@@ -41,7 +42,7 @@ class Library:
 
     def add_book(self, title: str, author_id: int, published_year: int):
         self.cursor.execute(
-            "INSERT INTO books (title, author_id, published_year) VALUES (%s, %s, %s)",
+            "INSERT INTO books (title, author_id, published_year,added_date) VALUES (%s, %s, %s,CURDATE())",
             (title, author_id, published_year),
         )
         self.connection.commit()
@@ -131,7 +132,8 @@ class UserOperations:
     def __init__(self):
         self.connection=get_connection()
         self.cursor=self.connection.cursor()
-        self.cursor.execute(f'USE library')
+        self.cursor.execute("CREATE DATABASE IF NOT EXISTS users")
+        self.cursor.execute(f'USE users')
         
         self.cursor.execute(
             """
@@ -139,6 +141,16 @@ class UserOperations:
                 type_id INT PRIMARY KEY AUTO_INCREMENT,
                 type VARCHAR(50) NOT NULL,
                 limit_borrow INT NOT NULL
+            )
+        """
+        )
+        self.cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS users (
+                user_id INT PRIMARY KEY AUTO_INCREMENT,
+                type_id VARCHAR(50) NOT NULL,
+                sign_up_date DATE NOT NULL,
+                last_login DATE NOT NULL
             )
         """
         )
