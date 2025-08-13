@@ -1,20 +1,24 @@
 import mysql.connector as sql
 from dotenv import load_dotenv
 import os
+from mysql.connector.pooling import PooledMySQLConnection
+from mysql.connector.abstracts import MySQLConnectionAbstract
 
 load_dotenv()
 
 
-class Library:
-    def __init__(self):
-        self.connection = sql.connect(
+def get_connection() -> (PooledMySQLConnection | MySQLConnectionAbstract):
+    return sql.connect(
             host=os.getenv("DB_HOST"),
             user=os.getenv("DB_USER"),
             password=os.getenv("DB_PASSWORD"),
         )
+class Library:
+    def __init__(self):
+        self.connection = get_connection()
         self.cursor = self.connection.cursor()
         self.cursor.execute("CREATE DATABASE IF NOT EXISTS library")
-        self.cursor.execute(f'USE {os.getenv("DB_NAME")}')
+        self.cursor.execute(f'USE library')
         self.cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS books (
@@ -33,6 +37,7 @@ class Library:
             )
         """
         )
+
 
     def add_book(self, title: str, author_id: int, published_year: int):
         self.cursor.execute(
@@ -116,3 +121,8 @@ class Library:
         query = "SELECT * FROM books WHERE published_year=%s"
         self.cursor.execute(query, (published_year,))
         return self.cursor.fetchall()
+
+    def add_user_type(self,user_type:str,limit:int):
+        query="INSERT INTO user_types (type,limit_borrow) VALUES (%s,%s)"
+        self.cursor.execute(query,(user_type,limit))
+        self.connection.commit()
