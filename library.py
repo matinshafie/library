@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import os
 from mysql.connector.pooling import PooledMySQLConnection
 from mysql.connector.abstracts import MySQLConnectionAbstract
+from datetime import date
 
 load_dotenv()
 
@@ -86,7 +87,7 @@ class Library:
     def search_book_by_id(self, book_id: int) -> tuple:
         query = "SELECT * FROM books WHERE book_id=%s"
         self.__cursor.execute(query, (book_id,))
-        return self.__cursor.fetchall()
+        return self.__cursor.fetchone()
 
     def search_author_by_id(self, author_id: int) -> tuple:
         query = "SELECT * FROM authors WHERE author_id=%s"
@@ -201,3 +202,53 @@ class UserOperations:
         query="DELETE FROM users WHERE user_id=%s"
         self.__cursor.execute(query,(user_id,))
         self.__connection.commit()
+
+    def search_user_by_id(self,user_id:int)->tuple:
+        query="SELECT * FROM users WHERE user_id = %s"
+        self.__cursor.execute(query,(user_id,))
+        return self.__cursor.fetchone()
+
+    def search_user(
+            self,
+            user_name:str=None,
+            age_range:list[int]=None,
+            first_name:str=None,
+            last_name:str=None,
+            sign_up_date_range:list[date]=None,
+            last_login_range:list[date]=None,
+            )->list[tuple]:
+        query="SELECT * FROM users"
+
+        conditions=list[str]()
+        params=list[str]()
+
+        if user_name is not None:
+            conditions.append("user_name LIKE %s")
+            params.append(f"%{user_name}%")
+
+        if age_range is not None:
+            conditions.append("age BETWEEN %s AND %s")
+            params.extend(age_range)
+
+        if first_name is not None:
+            conditions.append("first_name LIKE %s")
+            params.append(f"%{first_name}%")
+
+        if last_name is not None:
+            conditions.append("last_name LIKE %s")
+            params.append(f"%{last_name}%")
+
+        if sign_up_date_range is not None:
+            conditions.append("sign_up_date_range BETWEEN %s AND %s")
+            params.extend(sign_up_date_range)
+
+        if last_login_range is not None:
+            conditions.append("last_login_range BETWEEN %s AND %s")
+            params.extend(last_login_range)
+
+
+        if conditions:
+            query += " WHERE " + " AND ".join(conditions)
+
+        self.__cursor.execute(query,tuple(params))
+        return self.__cursor.fetchall()
