@@ -124,11 +124,6 @@ class Library:
         self.__cursor.execute(query, (published_year,))
         return self.__cursor.fetchall()
 
-    def add_user_type(self,user_type:str,limit:int):
-        query="INSERT INTO user_types (type,limit_borrow) VALUES (%s,%s)"
-        self.__cursor.execute(query,(user_type,limit))
-        self.__connection.commit()
-
 class UserOperations:
     def __init__(self):
         self.__connection=get_connection()
