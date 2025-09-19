@@ -94,6 +94,9 @@ def show_client_options():
 def add_book():
     title=get_prompt("enter title: ",range(1,100)).strip()
     author_id=get_integer("enter author id: ")
+    if not db.author_id_exists(author_id):
+        print("author id doesn't exist please try again later")
+        return
     number=get_integer("enter the number of books: ")
     published_year=get_date("enter published date year: ")
 
@@ -158,7 +161,13 @@ def author_options():
 
 def add_book_tag():
     book_id=get_integer("enter book id: ")
+    if not db.book_id_exists(book_id):
+        print("book id doesn't exist please try again later")
+        return
     tag_id=get_integer("enter tag id: ")
+    if not db.tag_id_exists(tag_id):
+        print("tag id doesn't exist please try again later")
+        return
 
     db.add_book_tag(book_id,tag_id)
 
@@ -218,7 +227,13 @@ def tag_options():
 
 def borrow_book():
     book_id=get_prompt("enter book id: ").strip()
+    if not db.book_id_exists(book_id):
+        print("book id doesn't exist please try again later")
+        return
     client_id=get_prompt("enter client id: ").strip()
+    if not db.client_id_exists(client_id):
+        print("book id doesn't exist please try again later")
+        return
 
     db.borrow_book(book_id,client_id)
 
