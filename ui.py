@@ -2,6 +2,8 @@ import database as db
 from typing import Sequence
 from datetime import datetime
 
+db.initialize_schema()
+
 
 def show_options():
     print("1-book options")
