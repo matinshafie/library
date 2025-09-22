@@ -1,0 +1,125 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- Schema library
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema library
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `library` ;
+USE `library` ;
+
+-- -----------------------------------------------------
+-- Table `library`.`authors`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `library`.`authors` (
+  `author_id` INT NOT NULL AUTO_INCREMENT,
+  `first_name` VARCHAR(45) NOT NULL,
+  `last_name` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`author_id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 3
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `library`.`tags`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `library`.`tags` (
+  `tag_id` INT NOT NULL AUTO_INCREMENT,
+  `tag` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`tag_id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 2
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `library`.`books`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `library`.`books` (
+  `book_id` INT NOT NULL AUTO_INCREMENT,
+  `author_id` INT NOT NULL,
+  `title` VARCHAR(45) NOT NULL,
+  `published_year` DATE NOT NULL,
+  `number` INT NOT NULL,
+  PRIMARY KEY (`book_id`),
+  INDEX `fk_books_author_idx` (`author_id` ASC) VISIBLE,
+  CONSTRAINT `fk_books_author`
+    FOREIGN KEY (`author_id`)
+    REFERENCES `library`.`authors` (`author_id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 9
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `library`.`book_tag`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `library`.`book_tag` (
+  `tag_id` INT NOT NULL,
+  `book_id` INT NOT NULL,
+  INDEX `fk_books_tags_book_tags1_idx` (`tag_id` ASC) VISIBLE,
+  INDEX `fk_books_tags_books1_idx` (`book_id` ASC) VISIBLE,
+  CONSTRAINT `fk_books_tags_book_tags1`
+    FOREIGN KEY (`tag_id`)
+    REFERENCES `library`.`tags` (`tag_id`),
+  CONSTRAINT `fk_books_tags_books1`
+    FOREIGN KEY (`book_id`)
+    REFERENCES `library`.`books` (`book_id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `library`.`clients`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `library`.`clients` (
+  `client_id` INT NOT NULL AUTO_INCREMENT,
+  `first_name` VARCHAR(45) NOT NULL,
+  `last_name` VARCHAR(45) NOT NULL,
+  `birth_date` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`client_id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 2
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+-- -----------------------------------------------------
+-- Table `library`.`borrowed_books`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `library`.`borrowed_books` (
+  `borrowed_id` INT NOT NULL AUTO_INCREMENT,
+  `book_id` INT NOT NULL,
+  `client_id` INT NOT NULL,
+  PRIMARY KEY (`borrowed_id`),
+  INDEX `fk_borrowed_books_books1_idx` (`book_id` ASC) VISIBLE,
+  INDEX `fk_borrowed_books_clients1_idx` (`client_id` ASC) VISIBLE,
+  CONSTRAINT `fk_borrowed_books_books1`
+    FOREIGN KEY (`book_id`)
+    REFERENCES `library`.`books` (`book_id`),
+  CONSTRAINT `fk_borrowed_books_clients1`
+    FOREIGN KEY (`client_id`)
+    REFERENCES `library`.`clients` (`client_id`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 3
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
