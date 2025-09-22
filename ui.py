@@ -50,9 +50,62 @@ def get_date(prompt:str)->bool:
         except:
             print("enter date correctly (like 2000-01-01)")
 
-def print_squence(sequence:Sequence[tuple]):
-    for num,row in enumerate(sequence,1):
-        print(f"{num}-{row}")
+def print_authors(authors:list[tuple]):
+    if not authors:
+        print("there are no authors printed")
+        return
+    for num,(author_id,first_name,last_name) in enumerate(authors,1):
+        print(f"{num}-id:{author_id}, full name:{first_name} {last_name}")
+    print()
+
+def print_books(books:list[tuple]):
+    if not books:
+        print("there are no books printed")
+        return
+    for num,(book_id,author_id,title,published_year,number) in enumerate(books,1):
+        print(
+            f"{num}-id:{book_id}, title:{title}, author id:{author_id}, published year:{published_year}, number:{number}"
+            )
+    print()
+        
+def print_book_tag(book_tags:list[tuple]):
+    if not book_tags:
+        print("there are no book tag printed")
+        return
+    for num,(book_id,tag_id) in enumerate(book_tags,1):
+        print(
+            f"{num}-book id:{book_id}, tag id:{tag_id}"
+            )
+        print()
+        
+def print_tags(tags:list[tuple]):
+    if not tags:
+        print("there are no authors printed")
+        return
+    for num,(tag_id,tag) in enumerate(tags,1):
+        print(
+            f"{num}-id:{tag_id}, tag:{tag}"
+            )
+    print()
+        
+def print_borrowed_books(borrowed_books:list[tuple]):
+    if not borrowed_books:
+        print("there are no borrowed books printed")
+        return
+    for num,(borrowed_id,book_id,client_id) in enumerate(borrowed_books,1):
+        print(
+            f"{num}-id:{borrowed_id}, book id:{book_id}, client id:{client_id}"
+            )
+    print()
+        
+def print_clients(clients:list[tuple]):
+    if not clients:
+        print("there are no clients printed")
+        return
+    for num,(client_id,first_name,last_name,birth_date) in enumerate(clients,1):
+        print(
+            f"{num}-id:{client_id}, full name:{first_name} {last_name}, birth date:{birth_date}"
+            )
     print()
             
 def show_book_options():
@@ -107,7 +160,7 @@ def search_books():
     author_id=get_integer("enter author id: (or skip)",allowed_null=True)
     title=get_prompt("enter title: (or skip)",allowed_null=True)
     published_year=get_prompt("enter published year: (or skip)",allowed_null=True)
-    print_squence(db.search_books(book_id,author_id,title,published_year))
+    print_books(db.search_books(book_id,author_id,title,published_year))
 
 def remove_book():
     book_id=get_integer("enter book id: ")
@@ -138,7 +191,7 @@ def search_authors():
     author_id=get_integer("enter author id: (or skip)",allowed_null=True)
     first_name=get_prompt("enter first name: (or skip)",allowed_null=True)
     last_name=get_prompt("enter last name: (or skip)",allowed_null=True)
-    print_squence(db.search_authors(first_name,author_id,last_name))
+    print_authors(db.search_authors(first_name,author_id,last_name))
 
 def remove_author():
     author_id=get_integer("enter author id: ")
@@ -174,7 +227,7 @@ def add_book_tag():
 def search_book_tags():
     book_id=get_integer("enter book id: (or skip)",allowed_null=True)
     tag_id=get_integer("enter tag id: (or skip)",allowed_null=True)
-    print_squence(db.search_book_tag(book_id,tag_id))
+    print_book_tag(db.search_book_tag(book_id,tag_id))
 
 def remove_book_tag():
     book_id=get_integer("enter book id: ")
@@ -204,7 +257,7 @@ def add_tag():
 def search_tag():
     tag_id=get_integer("enter tag id: (or skip)",allowed_null=True)
     tag=get_prompt("enter tag: (or skip)",allowed_null=True)
-    print_squence(db.search_tag(tag_id,tag))
+    print_tags(db.search_tag(tag_id,tag))
 
 def remove_tag():
     tag_id=get_integer("enter tag id: ")
@@ -241,7 +294,7 @@ def search_borrowed_books():
     borrowed_id=get_integer("enter borrowed id: (or skip)",allowed_null=True)
     book_id=get_integer("enter book id: (or skip)",allowed_null=True)
     client_id=get_integer("enter client id: (or skip)",allowed_null=True)
-    print_squence(db.search_borrowed_books(borrowed_id,book_id,client_id))
+    print_borrowed_books(db.search_borrowed_books(borrowed_id,book_id,client_id))
 
 def remove_borrowed_book():
     borrowed_id=get_integer("enter borrowed id: ")
@@ -273,7 +326,7 @@ def search_clients():
     client_id=get_integer("enter client_id id: (or skip)",allowed_null=True)
     first_name=get_prompt("enter first name: (or skip)",allowed_null=True)
     last_name=get_prompt("enter last name: (or skip)",allowed_null=True)
-    print_squence(db.search_clients(client_id,first_name,last_name))
+    print_clients(db.search_clients(client_id,first_name,last_name))
 
 def remove_client():
     client_id=get_integer("enter client id: ")
