@@ -352,28 +352,6 @@ def search_book_tag(
             cursor.execute(query,tuple(book_tag_search_columns))
             return cursor.fetchall()
 
-def search_book_tag(
-        book_id:int=None,
-        tag_id:int=None,
-        )->list[tuple]:
-    book_tag_search_columns=[]
-    book_tag_column_names=list[str]()
-    if book_id is not None:
-        book_tag_search_columns.append(str(book_id))
-        book_tag_column_names.append("book_id=%s")
-    if tag_id is not None:
-        book_tag_search_columns.append(str(tag_id))
-        book_tag_column_names.append("tag_id=%s")
-
-    query="SELECT * FROM book_tag"
-    if book_tag_column_names:
-        query+=" WHERE "
-    query+=" AND ".join(book_tag_column_names)
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute(query,tuple(book_tag_search_columns))
-            return cursor.fetchall()
-
 def search_tag(
         tag_id:int=None,
         tag:str=None,
@@ -487,5 +465,3 @@ def tag_id_exists(tag_id:int)->bool:
         with conn.cursor() as cursor:
             cursor.execute("SELECT 1 FROM tags WHERE tag_id=%s",(tag_id,))
             return bool(cursor.fetchone())
-        
-initialize_schema()
