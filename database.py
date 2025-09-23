@@ -24,150 +24,26 @@ def get_connection()->sql.MySQLConnection:
             raise Error("could not connect to database")
     except Error as e:
         print("error connecting to database " + e)
-        raise 
-    
-def create_schema():
-    query="""CREATE SCHEMA IF NOT EXISTS `library` ;
-    USE `library`"""
-
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute(query)
-    
-def create_authors_table():
-    query="""CREATE TABLE IF NOT EXISTS `library`.`authors` (
-        `author_id` INT NOT NULL AUTO_INCREMENT,
-        `first_name` VARCHAR(45) NOT NULL,
-        `last_name` VARCHAR(45) NOT NULL,
-        PRIMARY KEY (`author_id`))
-    ENGINE = InnoDB
-    AUTO_INCREMENT = 3
-    DEFAULT CHARACTER SET = utf8mb4
-    COLLATE = utf8mb4_0900_ai_ci;"""
-
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute(query)
-
-def create_books_table():
-    query="""CREATE TABLE IF NOT EXISTS `library`.`books` (
-        `book_id` INT NOT NULL AUTO_INCREMENT,
-        `author_id` INT NOT NULL,
-        `title` VARCHAR(45) NOT NULL,
-        `published_year` DATE NOT NULL,
-        `number` INT NOT NULL,
-        PRIMARY KEY (`book_id`),
-        INDEX `fk_books_author_idx` (`author_id` ASC) VISIBLE,
-        CONSTRAINT `fk_books_author`
-            FOREIGN KEY (`author_id`)
-            REFERENCES `library`.`authors` (`author_id`))
-    ENGINE = InnoDB
-    AUTO_INCREMENT = 9
-    DEFAULT CHARACTER SET = utf8mb4
-    COLLATE = utf8mb4_0900_ai_ci;"""
-
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute(query)
-
-def create_tags_table():
-    query="""CREATE TABLE IF NOT EXISTS `library`.`tags` (
-        `tag_id` INT NOT NULL AUTO_INCREMENT,
-        `tag` VARCHAR(45) NOT NULL,
-        PRIMARY KEY (`tag_id`))
-    ENGINE = InnoDB
-    AUTO_INCREMENT = 2
-    DEFAULT CHARACTER SET = utf8mb4
-    COLLATE = utf8mb4_0900_ai_ci;"""
-
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute(query)
-
-def create_borrowed_books_table():
-    query="""CREATE TABLE IF NOT EXISTS `library`.`borrowed_books` (
-        `borrowed_id` INT NOT NULL AUTO_INCREMENT,
-        `book_id` INT NOT NULL,
-        `client_id` INT NOT NULL,
-        PRIMARY KEY (`borrowed_id`),
-        INDEX `fk_borrowed_books_books1_idx` (`book_id` ASC) VISIBLE,
-        INDEX `fk_borrowed_books_clients1_idx` (`client_id` ASC) VISIBLE,
-        CONSTRAINT `fk_borrowed_books_books1`
-            FOREIGN KEY (`book_id`)
-            REFERENCES `library`.`books` (`book_id`),
-        CONSTRAINT `fk_borrowed_books_clients1`
-            FOREIGN KEY (`client_id`)
-            REFERENCES `library`.`clients` (`client_id`))
-    ENGINE = InnoDB
-    AUTO_INCREMENT = 3
-    DEFAULT CHARACTER SET = utf8mb4
-    COLLATE = utf8mb4_0900_ai_ci;"""
-
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute(query)
-
-def create_clients_table():
-    query="""CREATE TABLE IF NOT EXISTS `library`.`clients` (
-        `client_id` INT NOT NULL AUTO_INCREMENT,
-        `first_name` VARCHAR(45) NOT NULL,
-        `last_name` VARCHAR(45) NOT NULL,
-        `birth_date` VARCHAR(45) NOT NULL,
-        PRIMARY KEY (`client_id`))
-    ENGINE = InnoDB
-    AUTO_INCREMENT = 2
-    DEFAULT CHARACTER SET = utf8mb4
-    COLLATE = utf8mb4_0900_ai_ci;"""
-
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute(query)
-
-def create_book_tag_table():
-    query="""CREATE TABLE IF NOT EXISTS `library`.`book_tag` (
-        `tag_id` INT NOT NULL,
-        `book_id` INT NOT NULL,
-        INDEX `fk_books_tags_book_tags1_idx` (`tag_id` ASC) VISIBLE,
-        INDEX `fk_books_tags_books1_idx` (`book_id` ASC) VISIBLE,
-        CONSTRAINT `fk_books_tags_book_tags1`
-            FOREIGN KEY (`tag_id`)
-            REFERENCES `library`.`tags` (`tag_id`),
-        CONSTRAINT `fk_books_tags_books1`
-            FOREIGN KEY (`book_id`)
-            REFERENCES `library`.`books` (`book_id`))
-    ENGINE = InnoDB
-    DEFAULT CHARACTER SET = utf8mb4
-    COLLATE = utf8mb4_0900_ai_ci;"""
-
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute(query)
+        raise
 
 def initialize_schema():
-    # setup_queries="""SET SQL_MODE=@OLD_SQL_MODE;
-    #     SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
-    #     SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;"""
-    # with get_connection() as conn:
-    #     with conn.cursor() as cursor:
-    #         cursor.execute(setup_queries)
-    #     conn.commit()
+    try:
+        with open("./schema_query.txt","r") as schema_query:
+            query_statements=schema_query.read().split(";")
 
-    create_schema()
-    create_books_table()
-    create_authors_table()
-    create_tags_table()
-    create_book_tag_table()
-    create_clients_table()
-    create_borrowed_books_table()
-
-    # tear_down_queries="""SET SQL_MODE=@OLD_SQL_MODE;
-    #     SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
-    #     SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;"""
-    
-    # with get_connection() as conn:
-    #     with conn.cursor() as cursor:
-    #         cursor.execute(tear_down_queries)
-    #     conn.commit()
+            with get_connection() as conn:
+                with conn.cursor() as cursor:
+                    for statement in query_statements:
+                        if statement.strip():
+                            cursor.execute(statement)
+                conn.commit()
+    except Error as e:
+        print("error executing schema script:" + e)
+        raise
+    except Exception:
+        print("an unexpected error occured:"+e)
+        raise
+            
 
 def add_book(author_id:int,title:str,number:int,published_year:str):
     query="""
