@@ -1,6 +1,5 @@
 import database as db
-from typing import Sequence
-from datetime import datetime
+from datetime import datetime,date
 
 db.initialize_schema()
 
@@ -43,12 +42,12 @@ def get_integer(prompt:str,num_range:range=None,allowed_null:bool=False)->int:
             print("please enter an integer value or your value should be listed on the options")
             print("try again!")
 
-def get_date(prompt:str)->bool:
+def get_date(prompt:str)->date:
     while True:
         try:
             return datetime.strptime(get_prompt(prompt),"%Y-%m-%d").date()
-        except:
-            print("enter date correctly (like 2000-01-01)")
+        except ValueError:
+            print("please enter the date correctly (like 2000-01-01)")
 
 def print_authors(authors:list[tuple]):
     if not authors:
@@ -279,11 +278,11 @@ def tag_options():
         pass
 
 def borrow_book():
-    book_id=get_prompt("enter book id: ").strip()
+    book_id=get_integer("enter book id: ")
     if not db.book_id_exists(book_id):
         print("book id doesn't exist please try again later")
         return
-    client_id=get_prompt("enter client id: ").strip()
+    client_id=get_integer("enter client id: ")
     if not db.client_id_exists(client_id):
         print("book id doesn't exist please try again later")
         return
@@ -318,7 +317,7 @@ def borrow_book_options():
 def add_client():
     first_name=get_prompt("enter the first name: ").strip()
     last_name=get_prompt("enter the last name: ").strip()
-    birth_date=get_date("enter the birth date year: ").strip()
+    birth_date=get_date("enter the birth date year: ")
 
     db.add_client(first_name,last_name,birth_date)
 
