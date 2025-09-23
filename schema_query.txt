@@ -14,7 +14,7 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Schema library
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `library` ;
+CREATE SCHEMA IF NOT EXISTS `library` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
 USE `library` ;
 
 -- -----------------------------------------------------
@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `library`.`authors` (
   `last_name` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`author_id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 3
+AUTO_INCREMENT = 5
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -36,10 +36,10 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `library`.`tags` (
   `tag_id` INT NOT NULL AUTO_INCREMENT,
-  `tag` VARCHAR(45) NOT NULL,
+  `tag` VARCHAR(50) NOT NULL,
   PRIMARY KEY (`tag_id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 2
+AUTO_INCREMENT = 3
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -50,16 +50,16 @@ COLLATE = utf8mb4_0900_ai_ci;
 CREATE TABLE IF NOT EXISTS `library`.`books` (
   `book_id` INT NOT NULL AUTO_INCREMENT,
   `author_id` INT NOT NULL,
-  `title` VARCHAR(45) NOT NULL,
+  `title` VARCHAR(50) NOT NULL,
   `published_year` DATE NOT NULL,
-  `number` INT NOT NULL,
+  `number` TINYINT(100) NOT NULL,
   PRIMARY KEY (`book_id`),
   INDEX `fk_books_author_idx` (`author_id` ASC) VISIBLE,
   CONSTRAINT `fk_books_author`
     FOREIGN KEY (`author_id`)
     REFERENCES `library`.`authors` (`author_id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 9
+AUTO_INCREMENT = 11
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS `library`.`clients` (
   `birth_date` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`client_id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 2
+AUTO_INCREMENT = 4
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
@@ -115,7 +115,7 @@ CREATE TABLE IF NOT EXISTS `library`.`borrowed_books` (
     FOREIGN KEY (`client_id`)
     REFERENCES `library`.`clients` (`client_id`))
 ENGINE = InnoDB
-AUTO_INCREMENT = 3
+AUTO_INCREMENT = 5
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 
