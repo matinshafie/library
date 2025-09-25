@@ -240,7 +240,7 @@ def search_tag(
         tag_column_names.append("tag_id=%s")
     if tag is not None:
         tag_search_columns.append(tag)
-        tag_column_names.append("tag_id=%s")
+        tag_column_names.append("tag=%s")
 
     query="SELECT * FROM tags"
     if tag_column_names:
