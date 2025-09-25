@@ -34,14 +34,15 @@ def initialize_schema():
             with get_connection() as conn:
                 with conn.cursor() as cursor:
                     for statement in query_statements:
-                        if statement.strip():
+                        statement=statement.strip()
+                        if statement!="":
                             cursor.execute(statement)
                 conn.commit()
     except Error as e:
-        print("error executing schema script:" + e)
+        print("error executing schema script:")
         raise
     except Exception:
-        print("an unexpected error occured:"+e)
+        print("an unexpected error occured:")
         raise
             
 
