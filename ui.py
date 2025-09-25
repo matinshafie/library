@@ -284,7 +284,7 @@ def borrow_book():
         return
     client_id=get_integer("enter client id: ")
     if not db.client_id_exists(client_id):
-        print("book id doesn't exist please try again later")
+        print("client id doesn't exist please try again later")
         return
 
     db.borrow_book(book_id,client_id)
@@ -340,8 +340,7 @@ def client_options():
     if option==1:
         add_client()
     elif option==2:
-        client_id=get_integer("enter client id: ")
-        db.remove_client(client_id)
+        remove_client()
     elif option==3:
         search_clients()
     elif option==4:

@@ -36,7 +36,7 @@ COLLATE = utf8mb4_0900_ai_ci;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `library`.`tags` (
   `tag_id` INT NOT NULL AUTO_INCREMENT,
-  `tag` VARCHAR(50) NOT NULL,
+  `tag` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`tag_id`))
 ENGINE = InnoDB
 AUTO_INCREMENT = 3
@@ -50,9 +50,9 @@ COLLATE = utf8mb4_0900_ai_ci;
 CREATE TABLE IF NOT EXISTS `library`.`books` (
   `book_id` INT NOT NULL AUTO_INCREMENT,
   `author_id` INT NOT NULL,
-  `title` VARCHAR(50) NOT NULL,
+  `title` VARCHAR(45) NOT NULL,
   `published_year` DATE NOT NULL,
-  `number` TINYINT(100) NOT NULL,
+  `number` INT NOT NULL,
   PRIMARY KEY (`book_id`),
   INDEX `fk_books_author_idx` (`author_id` ASC) VISIBLE,
   CONSTRAINT `fk_books_author`
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `library`.`clients` (
   `client_id` INT NOT NULL AUTO_INCREMENT,
   `first_name` VARCHAR(45) NOT NULL,
   `last_name` VARCHAR(45) NOT NULL,
-  `birth_date` VARCHAR(45) NOT NULL,
+  `birth_date` DATE NOT NULL,
   PRIMARY KEY (`client_id`))
 ENGINE = InnoDB
 AUTO_INCREMENT = 4
