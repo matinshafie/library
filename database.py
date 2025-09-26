@@ -151,131 +151,75 @@ def remove_book_tag(book_id:int,tag_id:int):
             cursor.execute(query,(book_id,tag_id))
         conn.commit()
 
+def generate_search_query(col_val_pairs:list[tuple],table_name:str)->list[tuple]:
+    query=f"SELECT * FROM {table_name} "
+    query_check_statements=list[str]()
+
+    for column,value in col_val_pairs:
+        if value is not None:
+            query_check_statements.append(column+"=%s")
+
+    if query_check_statements:
+        query+="WHERE "
+
+    query+=" AND ".join(query_check_statements)
+
+    with get_connection() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                query,
+                tuple([pair[1] for pair in col_val_pairs if pair[1] is not None])
+                )
+            return cursor.fetchall()
+
 def search_books(
         book_id:int=None,
         author_id:int=None,
         title:str=None,
         published_year:str=None,
         )->list[tuple]:
-    book_search_columns=[]
-    book_column_names=list[str]()
-    if book_id is not None:
-        book_search_columns.append(str(book_id))
-        book_column_names.append("book_id=%s")
-    if author_id is not None:
-        book_search_columns.append(str(author_id))
-        book_column_names.append("author_id=%s")
-    if title is not None:
-        book_search_columns.append(title)
-        book_column_names.append("title=%s")
-    if published_year is not None:
-        book_search_columns.append(published_year)
-        book_column_names.append("published_year=%s")
+    columns=["book_id","author_id","title","published_year"]
+    values=[book_id,author_id,title,published_year]
 
-    query="SELECT * FROM books"
-    if book_column_names:
-        query+=" WHERE "
-    query+=" AND ".join(book_column_names)
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute(query,tuple(book_search_columns))
-            return cursor.fetchall()
+    return generate_search_query(list(zip(columns,values)),"books")
 
 def search_authors(
         author_id:int=None,
         first_name:str=None,
         last_name:str=None,
         )->list[tuple]:
-    author_search_columns=[]
-    author_column_names=list[str]()
-    if author_id is not None:
-        author_search_columns.append(str(author_id))
-        author_column_names.append("author_id=%s")
-    if first_name is not None:
-        author_search_columns.append(first_name)
-        author_column_names.append("first_name=%s")
-    if last_name is not None:
-        author_search_columns.append(last_name)
-        author_column_names.append("last_name=%s")
+    columns=["author_id","first_name","last_name"]
+    values=[author_id,first_name,last_name]
 
-    query="SELECT * FROM authors"
-    if author_column_names:
-        query+=" WHERE "
-    query+=" AND ".join(author_column_names)
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute(query,tuple(author_search_columns))
-            return cursor.fetchall()
+    return generate_search_query(list(zip(columns,values)),"authors")
 
 def search_book_tag(
         book_id:int=None,
         tag_id:int=None,
         )->list[tuple]:
-    book_tag_search_columns=[]
-    book_tag_column_names=list[str]()
-    if book_id is not None:
-        book_tag_search_columns.append(str(book_id))
-        book_tag_column_names.append("book_id=%s")
-    if tag_id is not None:
-        book_tag_search_columns.append(str(tag_id))
-        book_tag_column_names.append("tag_id=%s")
+    columns=["book_id","tag_id"]
+    values=[book_id,tag_id]
 
-    query="SELECT * FROM book_tag"
-    if book_tag_column_names:
-        query+=" WHERE "
-    query+=" AND ".join(book_tag_column_names)
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute(query,tuple(book_tag_search_columns))
-            return cursor.fetchall()
+    return generate_search_query(list(zip(columns,values)),"book_tag")
 
 def search_tag(
         tag_id:int=None,
         tag:str=None,
         )->list[tuple]:
-    tag_search_columns=[]
-    tag_column_names=list[str]()
-    if tag_id is not None:
-        tag_search_columns.append(str(tag_id))
-        tag_column_names.append("tag_id=%s")
-    if tag is not None:
-        tag_search_columns.append(tag)
-        tag_column_names.append("tag=%s")
+    columns=["tag_id","tag"]
+    values=[tag_id,tag]
 
-    query="SELECT * FROM tags"
-    if tag_column_names:
-        query+=" WHERE "
-    query+=" AND ".join(tag_column_names)
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute(query,tuple(tag_search_columns))
-            return cursor.fetchall()
+    return generate_search_query(list(zip(columns,values)),"tags")
 
 def search_borrowed_books(
         borrowed_id:int=None,
         book_id:int=None,
         client_id:int=None
         )->list[tuple]:
-    borrowed_books_search_columns=[]
-    borrowed_books_column_names=list[str]()
-    if borrowed_id is not None:
-        borrowed_books_search_columns.append(str(borrowed_id))
-        borrowed_books_column_names.append("borrowed_id=%s")
-    if book_id is not None:
-        borrowed_books_search_columns.append(str(book_id))
-        borrowed_books_column_names.append("book_id=%s")
-    if client_id is not None:
-        borrowed_books_search_columns.append(str(client_id))
-        borrowed_books_column_names.append("client_id=%s")
+    columns=["borrowed_id","book_id","client_id"]
+    values=[borrowed_id,book_id,client_id]
 
-    query="SELECT * FROM borrowed_books"
-    if borrowed_books_column_names:
-        query+=" WHERE "
-    query+=" AND ".join(borrowed_books_column_names)
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute(query,tuple(borrowed_books_search_columns))
-            return cursor.fetchall()
+    return generate_search_query(list(zip(columns,values)),"borrowed_books")
 
 def search_clients(
         client_id:int=None,
@@ -283,29 +227,10 @@ def search_clients(
         last_name:str=None,
         birth_date:str=None
         )->list[tuple]:
-    clients_search_columns=[]
-    clients_column_names=list[str]()
-    if client_id is not None:
-        clients_search_columns.append(str(client_id))
-        clients_column_names.append("client_id=%s")
-    if first_name is not None:
-        clients_search_columns.append(first_name)
-        clients_column_names.append("first_name=%s")
-    if last_name is not None:
-        clients_search_columns.append(last_name)
-        clients_column_names.append("last_name=%s")
-    if birth_date is not None:
-        clients_search_columns.append(birth_date)
-        clients_column_names.append("birth_date=%s")
+    columns=["client_id","first_name","last_name","birth_date"]
+    values=[client_id,first_name,last_name,birth_date]
 
-    query="SELECT * FROM clients"
-    if clients_column_names:
-        query+=" WHERE "
-    query+=" AND ".join(clients_column_names)
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute(query,tuple(clients_search_columns))
-            return cursor.fetchall()
+    return generate_search_query(list(zip(columns,values)),"clients")
 
 def book_id_exists(book_id:int)->bool:
     with get_connection() as conn:
