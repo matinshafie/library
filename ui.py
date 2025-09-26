@@ -106,42 +106,28 @@ def print_clients(clients:list[tuple]):
             f"{num}-id:{client_id}, full name:{first_name} {last_name}, birth date:{birth_date}"
             )
     print()
+
+def show_operation_options(operations:list[str],for_option:str):
+    for num,operation in enumerate(operations,1):
+        print(f"{num}-{operation} {for_option}")
             
 def show_book_options():
-    print("1-add book")
-    print("2-remove book")
-    print("3-search book")
-    print("4-back")
+    show_operation_options(["add","remove","search","go back from"],"book")
 
 def show_author_options():
-    print("1-add author")
-    print("2-remove author")
-    print("3-search author")
-    print("4-back")
+    show_operation_options(["add","remove","search","go back from"],"author")
 
 def show_book_tag_options():
-    print("1-add book_tag")
-    print("2-remove book_tag")
-    print("3-search book_tag")
-    print("4-back")
+    show_operation_options(["add","remove","search","go back from"],"book_tag")
 
 def show_tag_options():
-    print("1-add tag")
-    print("2-remove tag")
-    print("3-search tag")
-    print("4-back")
+    show_operation_options(["add","remove","search","go back from"],"tag")
 
 def show_borrowed_books_options():
-    print("1-add borrowed books")
-    print("2-remove borrowed books")
-    print("3-search borrowed books")
-    print("4-back")
+    show_operation_options(["add","remove","search","go back from"],"borrowed_book")
 
 def show_client_options():
-    print("1-add client")
-    print("2-remove client")
-    print("3-search client")
-    print("4-back")
+    show_operation_options(["add","remove","search","go back from"],"client")
 
 def add_book():
     title=get_prompt("enter title: ",range(1,100)).strip()
@@ -366,5 +352,5 @@ def run_library():
         elif option==7:
             break
 
-if __name__=="__main__":
-    run_library()
+# if __name__=="__main__":
+#     run_library()
