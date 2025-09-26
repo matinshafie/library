@@ -44,67 +44,46 @@ def initialize_schema():
     except Exception:
         print("an unexpected error occured:")
         raise
-            
+
+def generate_insert_query(column_names:list[str],values:list[str],table_name:str)->list[tuple]:
+    query="INSERT INTO "+table_name
+    columns=f" ({",".join(column_names)}) "
+    place_holders=f"({",".join(["%s"]*len(column_names))}) "
+    query+=columns
+    query +=f"VALUES " + place_holders
+
+    with get_connection() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(query,tuple(values))
+        conn.commit()
 
 def add_book(author_id:int,title:str,number:int,published_year:str):
-    query="""
-    INSERT INTO books 
-        (author_id,title,number,published_year) 
-    VALUES (%s,%s,%s,%s)
-    """
-
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute(query, (author_id,title,number,published_year))
-        conn.commit()
+    column_names=["author_id","title","number","published_year"]
+    values=[author_id,title,number,published_year]
+    generate_insert_query(column_names,values,"books")
 
 def add_author(first_name:str,last_name:str):
-    query="""
-    INSERT INTO authors 
-        (first_name,last_name) 
-    VALUES (%s,%s)
-    """
-
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute(query, (first_name,last_name))
-        conn.commit()
+    column_names=["first_name","last_name"]
+    values=[first_name,last_name]
+    generate_insert_query(column_names,values,"authors")
 
 def add_tag(tag:str):
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute(
-                "INSERT INTO tags (tag) VALUES (%s)",
-                (tag,)
-                )
-            conn.commit()
+    generate_insert_query(["tag"],[tag],"tags")
     
 def borrow_book(book_id:int,client_id:int):
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute(
-                "INSERT INTO borrowed_books (book_id,client_id) VALUES (%s,%s)",
-                (book_id,client_id)
-                )
-        conn.commit()
+    column_names=["book_id","client_id"]
+    values=[book_id,client_id]
+    generate_insert_query(column_names,values,"borrowed_books")
 
 def add_client(first_name:str,last_name:str,birth_date:str):
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute(
-                "INSERT INTO clients (first_name,last_name,birth_date) VALUES (%s,%s,%s)",
-                (first_name,last_name,birth_date)
-                )
-        conn.commit()
+    column_names=["first_name","last_name","birth_date"]
+    values=[first_name,last_name,birth_date]
+    generate_insert_query(column_names,values,"clients")
 
 def add_book_tag(book_id:int,tag_id:int):
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute(
-                "INSERT INTO book_tag (book_id,tag_id) VALUES (%s,%s)",
-                (book_id,tag_id)
-                )
-        conn.commit()
+    column_names=["book_id","tag_id"]
+    values=[book_id,tag_id]
+    generate_insert_query(column_names,values,"book_tag")
     
 def remove_author(author_id:int):
     with get_connection() as conn:
