@@ -45,7 +45,7 @@ def initialize_schema():
         print("an unexpected error occured:")
         raise
 
-def generate_insert_query(column_names:list[str],values:list[str],table_name:str)->list[tuple]:
+def generate_insert_query(column_names:list[str],values:list[str],table_name:str):
     query="INSERT INTO "+table_name
     columns=f" ({",".join(column_names)}) "
     place_holders=f"({",".join(["%s"]*len(column_names))}) "
@@ -84,51 +84,38 @@ def add_book_tag(book_id:int,tag_id:int):
     column_names=["book_id","tag_id"]
     values=[book_id,tag_id]
     generate_insert_query(column_names,values,"book_tag")
+
+def generate_delete_query(primary_keys:list[str],values:list[str],table_name:str):
+    query="DELETE FROM "+table_name+" WHERE "
+    
+    check_statements=list[str]()
+
+    for key in primary_keys:
+        check_statements.append(key+"=%s")
+    query+=" AND ".join(check_statements)
+
+    with get_connection() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(query,tuple(values))
+        conn.commit()
     
 def remove_author(author_id:int):
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute(
-                "DELETE FROM authors WHERE author_id = %s",(author_id,)
-                )
-        conn.commit()
+    generate_delete_query(["author_id"],[author_id],"authors")
     
 def remove_book(book_id:int):
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute("DELETE FROM books WHERE book_id=%s",(book_id,))
-        conn.commit()
+    generate_delete_query(["book_id"],[book_id],"books")
 
 def remove_tag(tag_id:int):
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute("DELETE FROM tags WHERE tag_id=%s",(tag_id,))
-        conn.commit()
+    generate_delete_query(["tag_id"],[tag_id],"tags")
 
 def remove_borrowed_book(borrowed_id:int):
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute(
-                "DELETE FROM borrowed_books WHERE borrowed_id=%s",
-                (borrowed_id,)
-                )
-        conn.commit()
+    generate_delete_query(["borrowed_id"],[borrowed_id],"borrowed_books")
 
 def remove_client(client_id:int):
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute(
-                "DELETE FROM clients WHERE client_id=%s",
-                (client_id,)
-                )
-        conn.commit()
+    generate_delete_query(["client_id"],[client_id],"clients")
 
 def remove_book_tag(book_id:int,tag_id:int):
-    query="DELETE FROM book_tag WHERE book_id=%s AND tag_id=%s"
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute(query,(book_id,tag_id))
-        conn.commit()
+    generate_delete_query(["book_id","tag_id"],[book_id,tag_id],"book_tag")
 
 def generate_search_query(col_val_pairs:list[tuple],table_name:str)->list[tuple]:
     query=f"SELECT * FROM {table_name} "
@@ -210,6 +197,14 @@ def search_clients(
     values=[client_id,first_name,last_name,birth_date]
 
     return generate_search_query(list(zip(columns,values)),"clients")
+
+def generate_existence_query(primary_keys:list[str],values:list[str],table_name:str)->bool:
+    query=f"SELECT 1 FROM {table_name} WHERE"
+
+    with get_connection() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(,(book_id,))
+            return bool(cursor.fetchone())
 
 def book_id_exists(book_id:int)->bool:
     with get_connection() as conn:
