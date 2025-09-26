@@ -199,45 +199,34 @@ def search_clients(
     return generate_search_query(list(zip(columns,values)),"clients")
 
 def generate_existence_query(primary_keys:list[str],values:list[str],table_name:str)->bool:
-    query=f"SELECT 1 FROM {table_name} WHERE"
+    query=f"SELECT 1 FROM {table_name} WHERE "
+
+    check_statements=list[str]()
+
+    for key in primary_keys:
+        check_statements.append(str(key)+"=%s")
+
+    query+=" AND ".join(check_statements)
 
     with get_connection() as conn:
         with conn.cursor() as cursor:
-            cursor.execute(,(book_id,))
+            cursor.execute(query,tuple(values))
             return bool(cursor.fetchone())
 
 def book_id_exists(book_id:int)->bool:
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute("SELECT 1 FROM books WHERE book_id=%s",(book_id,))
-            return bool(cursor.fetchone())
+    return generate_existence_query(["book_id"],[book_id],"books")
 
 def author_id_exists(author_id:int)->bool:
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute("SELECT 1 FROM authors WHERE author_id=%s",(author_id,))
-            return bool(cursor.fetchone())
+    return generate_existence_query(["author_id"],[author_id],"authors")
 
 def book_tag_id_exists(book_id:int,tag_id:int)->bool:
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute("SELECT 1 FROM book_tag b WHERE book_id=%s AND tag_id=%s",(book_id,tag_id))
-            return bool(cursor.fetchone())
+    return generate_existence_query(["book_id",tag_id],[book_id,tag_id],"book_tag")
 
 def borrowed_id_exists(borrowed_id:int)->bool:
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute("SELECT 1 FROM borrowed_books WHERE borrowed_id=%s",(borrowed_id,))
-            return bool(cursor.fetchone())
+    return generate_existence_query(["borrowed_id"],[borrowed_id],"borrowed_bookss")
 
 def client_id_exists(client_id:int)->bool:
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute("SELECT 1 FROM clients WHERE client_id=%s",(client_id,))
-            return bool(cursor.fetchone())
+    return generate_existence_query(["client_id"],[client_id],"clients")
 
 def tag_id_exists(tag_id:int)->bool:
-    with get_connection() as conn:
-        with conn.cursor() as cursor:
-            cursor.execute("SELECT 1 FROM tags WHERE tag_id=%s",(tag_id,))
-            return bool(cursor.fetchone())
+    return generate_existence_query(["tag_id"],[tag_id],"tags")
